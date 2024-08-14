@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject IStringLocalizer<MainLayout> Localizer
+@inject IJSRuntime JS
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,6 +9,10 @@
 
     <main>
         <div class="top-row px-4">
+            <select @onchange="ChangeCulture">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 
@@ -14,3 +21,13 @@
         </article>
     </main>
 </div>
+
+@code {
+    private async Task ChangeCulture(ChangeEventArgs e)
+    {
+        var culture = new CultureInfo(e.Value!.ToString()!);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        await JS.InvokeVoidAsync("eval", "location.reload()");
+    }
+}
